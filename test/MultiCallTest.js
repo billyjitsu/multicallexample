@@ -1,11 +1,10 @@
 const {
-  time,
   loadFixture,
 } = require("@nomicfoundation/hardhat-toolbox/network-helpers");
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 
-describe("Multi", function () {
+describe("Deploy", function () {
   async function deployContracts() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
@@ -22,35 +21,27 @@ describe("Multi", function () {
     return { testContract, multiCall, multiCallRead, owner, otherAccount };
   }
 
-  describe("Deployment", function () {
+  describe("--Test Regular Calls--", function () {
     it("Read the functions timestamps", async function () {
-      const { testContract } = await loadFixture(
-        deployContracts
-      );
-      // let function1Data = await testContract.func1();
-      // console.log("function1Data", function1Data);
-      // let function2Data = await testContract.func2();
-      // console.log("function2Data", function2Data);
-
+      const { testContract } = await loadFixture(deployContracts);
 
       await testContract.func3();
       await testContract.func4();
       console.log(
-        "Timestamp after Function 3:",
+        "Timestamp with a regular tx Function 3:",
         await testContract.timestampf3()
       );
       console.log(
-        "Timestamp after Function 4:",
+        "Timestamp with a regular tx Function 4:",
         await testContract.timestampf4()
       );
     });
   });
 
-  describe("MultiCallTest", function () {
-    it("Test with MultiCallRead", async function () {
-      const { testContract, multiCall, multiCallRead, owner } = await loadFixture(
-        deployContracts
-      );
+  describe("--MultiCallTest--", function () {
+    it("--Test with MultiCallRead--", async function () {
+      const { testContract, multiCall, multiCallRead, owner } =
+        await loadFixture(deployContracts);
 
       //const callActions = ["func1", "func2", "func3", "func4"]; // Function names to be called
       const callActions = ["func1", "func2"]; // Function names to be called
@@ -75,20 +66,27 @@ describe("Multi", function () {
 
       try {
         const returnData = await multiCallRead.multiCall(calls);
-          console.log("Return Data:", returnData);
-       } catch (error) {
-         console.error("Error executing aggregate3 call:", error);
-       }
+        console.log("Return Data:", returnData);
+
+        // Decode the return Data received from the read only call
+        const decodedResults = returnData.map((data) =>
+          ethers.AbiCoder.defaultAbiCoder().decode(["(uint256,uint256)"], data)
+        );
+
+        // const decodedResults = returnData.map(data => ethers.utils.defaultAbiCoder.decode(['uint256', 'uint256'], data));
+        console.log("Decoded Results:", decodedResults);
+      } catch (error) {
+        console.error("Error executing aggregate3 call:", error);
+      }
     });
 
-    it("Test with MultiCall3 Function Call", async function () {
-      const { testContract, multiCall, multiCallRead, owner } = await loadFixture(
-        deployContracts
-      );
+    it("--Test with MultiCall3 Function Call--", async function () {
+      const { testContract, multiCall, multiCallRead, owner } =
+        await loadFixture(deployContracts);
 
       await testContract.func3();
       await testContract.func4();
-      console.log("******Timestamp Called with a Normal Tx******")
+      console.log("******Timestamp Called with a Normal Tx******");
       console.log(
         "Normal Call of Function 3:",
         await testContract.timestampf3()
@@ -119,14 +117,14 @@ describe("Multi", function () {
       // );
 
       try {
-         const returnData = await multiCall.aggregate3(calls);
-         // console.log("Return Data:", returnData);
-       } catch (error) {
-         console.error("Error executing aggregate3 call:", error);
-       }
+        const returnData = await multiCall.aggregate3(calls);
+        //  console.log("Return Data:", returnData);
+      } catch (error) {
+        console.error("Error executing aggregate3 call:", error);
+      }
 
-      console.log("******Timestamp Called with MultiCall3******")
-       console.log(
+      console.log("******Timestamp Called with MultiCall3 - Should be the same timestamp******");
+      console.log(
         "Timestamp after Function 3:",
         await testContract.timestampf3()
       );
@@ -134,9 +132,6 @@ describe("Multi", function () {
         "Timestamp after Function 4:",
         await testContract.timestampf4()
       );
-
-      console.log("Data from MultiCall3:", returnData);
-
     });
   });
 });
