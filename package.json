@@ -22,5 +22,13 @@
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.0",
     "typechain": "^8.3.0"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "typechain": "hardhat typechain",
+    "coverage": "hardhat coverage",
+    "verify": "hardhat verify",
+    "script": "hardhat run scripts/MultiCallScript.js --network sepolia"
   }
 }

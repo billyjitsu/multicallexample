@@ -24,7 +24,7 @@ describe("Deploy", function () {
   describe("--Test Regular Calls--", function () {
     it("Read the functions timestamps", async function () {
       const { testContract } = await loadFixture(deployContracts);
-
+     
       await testContract.func3();
       await testContract.func4();
       console.log(

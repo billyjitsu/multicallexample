@@ -2,9 +2,11 @@ const { ethers } = require("ethers");
 require("dotenv").config();
 const multicABI = require("./abis/Multicall3.json");
 const multiCallReadABI = require("./abis/MultiCallRead.json");
+const testContractABI = require("./abis/TestContract.json");
 
 // Setup provider and signer
-const provider = new ethers.JsonRpcProvider("https://rpc.ankr.com/eth_sepolia");
+const provider = new ethers.JsonRpcProvider(process.env.PROVIDER_URL);
+
 const privateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
 console.log("Wallet address: ", wallet.address);
@@ -17,15 +19,17 @@ const yourContractAddress = "0xc6143B395b0595063ae435bDBD6DfC74Bd598D28";
 const multiCallReadContract = new ethers.Contract(multiCallREADONLYAddress, multiCallReadABI.abi, wallet);
 const multicallContract = new ethers.Contract(multiCall3Address, multicABI.abi, wallet);
 // Manual way of inputting the ABI - You may see this style in some examples
-const testContractABI = [
-    "function func1() external view returns (uint, uint)",
-    "function func2() external view returns (uint, uint)",
-    "function func3() external",
-    "function func4() external",
-    "function timestampf3() external view returns (uint256)",
-    "function timestampf4() external view returns (uint256)"
-]
-const yourContract = new ethers.Contract(yourContractAddress, testContractABI, wallet);
+// const testContractABI = [
+//     "function func1() external view returns (uint, uint)",
+//     "function func2() external view returns (uint, uint)",
+//     "function func3() external",
+//     "function func4() external",
+//     "function timestampf3() external view returns (uint256)",
+//     "function timestampf4() external view returns (uint256)"
+// ]
+const yourContract = new ethers.Contract(yourContractAddress, testContractABI.abi, wallet);
+// console.log("Provider: ", provider._network);
+
 
 async function batchCallUsingAggregate3() {
   // Dynamically encode the calls to your functions
@@ -54,10 +58,11 @@ async function batchCallUsingAggregate3() {
 
   console.log("Check Timestamps with a regular tx Function call to Function 3 and 4");
 
-      let tx1 = await yourContract.func3();
-       await tx1.wait();
+      let tx1 = await yourContract.func3({ gasPrice: 1000000000 ,gasLimit: 5000000});
+      // console.log("tx1:", tx1);
+      //  await tx1.wait(3);
       let tx2 = await yourContract.func4();
-      await tx2.wait();
+      // await tx2.wait();
       console.log(
         "Timestamp with a regular tx Function 3:",
         await yourContract.timestampf3()
