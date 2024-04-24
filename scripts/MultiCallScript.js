@@ -15,6 +15,7 @@ console.log("Wallet address: ", wallet.address);
 const multiCallREADONLYAddress = "0xb9D07d90b98182cd4DE542AB8FA1B4447c15A0f5";
 const multiCall3Address = "0x9835F00a3f5C539eBfE19DD01715749558CDe25A";
 const yourContractAddress = "0xc6143B395b0595063ae435bDBD6DfC74Bd598D28";
+const your2ndContractAddress = "0xDcc01DaFB8f43017b1e9b31C69480dE3138c60e4";
 
 const multiCallReadContract = new ethers.Contract(multiCallREADONLYAddress, multiCallReadABI.abi, wallet);
 const multicallContract = new ethers.Contract(multiCall3Address, multicABI.abi, wallet);
@@ -27,8 +28,16 @@ const multicallContract = new ethers.Contract(multiCall3Address, multicABI.abi, 
 //     "function timestampf3() external view returns (uint256)",
 //     "function timestampf4() external view returns (uint256)"
 // ]
+
 const yourContract = new ethers.Contract(yourContractAddress, testContractABI.abi, wallet);
 // console.log("Provider: ", provider._network);
+
+const secondTestContractABI = [
+  "function func5() external",
+  "function timestampf5() external view returns (uint256)",
+];
+
+const your2ndContract = new ethers.Contract(your2ndContractAddress, secondTestContractABI, wallet);
 
 
 async function batchCallUsingAggregate3() {
