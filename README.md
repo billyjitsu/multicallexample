@@ -89,7 +89,5 @@ You can run the script with
 ```shell
 npx hardhat run scripts/MultiCallScript.js
 or
-
 node scripts/MulticallScript.js
-
 ```
