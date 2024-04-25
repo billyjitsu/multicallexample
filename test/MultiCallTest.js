@@ -158,7 +158,7 @@ describe("Deploy", function () {
       const callActions = [
         { contract: testContract, funcName: "func3" },
         { contract: testContract, funcName: "func4" },
-        { contract: testContract2, funcName: "func5" }  // Assuming 'anotherFunc' is the new function
+        { contract: testContract2, funcName: "func5" }  
       ];
       
       const callsData = await Promise.all(
