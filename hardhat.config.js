@@ -30,6 +30,10 @@ module.exports = {
     sepolia: {
       url: process.env.PROVIDER_URL,
       accounts: [`0x${process.env.PRIVATE_KEY}`]
+    },
+    arbitrumSepolia: {
+      url: process.env.PROVIDER_URL,
+      accounts: [`0x${process.env.PRIVATE_KEY}`]
     }
   }
 };

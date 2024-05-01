@@ -11,10 +11,15 @@ const privateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
 
 // Contract setups
-const multiCallREADONLYAddress = "0xb9D07d90b98182cd4DE542AB8FA1B4447c15A0f5";
-const multiCall3Address = "0x9835F00a3f5C539eBfE19DD01715749558CDe25A";
-const yourContractAddress = "0xc6143B395b0595063ae435bDBD6DfC74Bd598D28";
-const your2ndContractAddress = "0xDcc01DaFB8f43017b1e9b31C69480dE3138c60e4";
+// Sepolia
+// const multiCallREADONLYAddress = "0xb9D07d90b98182cd4DE542AB8FA1B4447c15A0f5";
+// const multiCall3Address = "0x9835F00a3f5C539eBfE19DD01715749558CDe25A";
+// const yourContractAddress = "0xc6143B395b0595063ae435bDBD6DfC74Bd598D28";
+// const your2ndContractAddress = "0xDcc01DaFB8f43017b1e9b31C69480dE3138c60e4";
+const multiCallREADONLYAddress = "0x5d693071E698295eDE352df04c9BF837eC15993A";
+const multiCall3Address = "0xFefDadb1c553a2d19ED43F6Aab0C7251470db1BA";
+const yourContractAddress = "0xe60C701701C76E8a61963903542D7241a2eaC7D3";
+const your2ndContractAddress = "0x88A92881c8298eB89C809868a6Da6A59bB98d3c9";
 
 const multiCallReadContract = new ethers.Contract(multiCallREADONLYAddress, multiCallReadABI.abi, wallet);
 const multicallContract = new ethers.Contract(multiCall3Address, multicABI.abi, wallet);
@@ -72,24 +77,37 @@ async function batchCallUsingAggregate3() {
        await tx1.wait();
       let tx2 = await yourContract.func4();
        await tx2.wait();
+      let tx3 = await your2ndContract.func5();
+        await tx3.wait();
       console.log(
         "Timestamp with a regular tx Function 3:",
         await yourContract.timestampf3()
       );
       console.log(
         "Timestamp with a regular tx Function 4:",
-        await yourContract.timestampf4())
+        await yourContract.timestampf4());
+      console.log(
+        "Timestamp with a regular tx Function 5:",
+        await your2ndContract.timestampf5()
+      );
 
-  const callTxActions = ["func3", "func4"]; // Function names to be called
-  const callsTxData = await Promise.all(callTxActions.map(async (funcName) => {
-    return yourContract.interface.encodeFunctionData(funcName, []);
+  const callTxActions = [
+    { contract: yourContract, funcName: "func3" },
+    { contract: yourContract, funcName: "func4" },
+    { contract: your2ndContract, funcName: "func5" }  
+  ];
+  console.log(" address of contract 1:", callTxActions[0].contract.target);
+
+  const callsTxData = await Promise.all(
+    callTxActions.map(async ({ contract, funcName }) => {
+    return contract.interface.encodeFunctionData(funcName, []);
   }));
 
   // Construct the calls array in the desired format
-  const callsTx = callsTxData.map((callData) => [
-    yourContractAddress,
+  const callsTx = callTxActions.map((action, index) => [
+    action.contract.target,
     true,
-    callData,
+    callsTxData[index],
   ]);
   console.log("Formatted batch callsTx for aggregate3:", JSON.stringify(callsTx));
 
@@ -109,7 +127,11 @@ async function batchCallUsingAggregate3() {
   );
   console.log(
     "Timestamp after multiCall Function 4:",
-    await yourContract.timestampf4())
+    await yourContract.timestampf4());
+  console.log(
+    "Timestamp after multiCall Function 5:",
+    await your2ndContract.timestampf5()
+  );
 
 }
 
