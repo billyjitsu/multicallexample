@@ -1,6 +1,6 @@
 # MultiCall Tutorial
 
-This repo covers examples of using a MultiCall smart contract.  The ability to call multiple contracts in a single call or do multiple transactions in a single call.  Saving on RPC requests and bulking transactions.
+This repo covers examples of using a MultiCall smart contract. Giving he ability to call multiple contracts in a single call or bulk transactions in a single call.  Saving on RPC requests and combining transactions.
 
 ### Files:
 
